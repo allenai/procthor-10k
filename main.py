@@ -1,7 +1,7 @@
-import gzip
 import json
 
 import prior
+from tqdm import tqdm
 
 # import pickle
 
@@ -35,16 +35,14 @@ import prior
 
 def load_dataset() -> prior.DatasetDict:
     """Load the houses dataset."""
-    with gzip.open("train.json.gz", "rb") as f:
-        train_houses = json.loads(f.read().decode("utf-8"))
-    with gzip.open("val.json.gz", "rb") as f:
-        val_houses = json.loads(f.read().decode("utf-8"))
-    with gzip.open("test.json.gz", "rb") as f:
-        test_houses = json.loads(f.read().decode("utf-8"))
-    return prior.DatasetDict(
-        train=prior.Dataset(
-            data=train_houses, dataset="procthor-dataset", split="train"
-        ),
-        val=prior.Dataset(data=val_houses, dataset="procthor-dataset", split="val"),
-        test=prior.Dataset(data=test_houses, dataset="procthor-dataset", split="test"),
-    )
+    data = {}
+    for split, size in [("train", 10_000), ("val", 1_000), ("test", 1_000)]:
+        with open(f"{split}.jsonl", "r") as f:
+            houses = [
+                json.loads(line)
+                for line in tqdm(f, total=size, desc=f"Loading {split}")
+            ]
+        data[split] = prior.Dataset(
+            data=houses, dataset="procthor-dataset", split=split
+        )
+    return prior.DatasetDict(**data)
