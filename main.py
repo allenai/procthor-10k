@@ -1,3 +1,4 @@
+import gzip
 import json
 
 import prior
@@ -37,7 +38,7 @@ def load_dataset() -> prior.DatasetDict:
     """Load the houses dataset."""
     data = {}
     for split, size in [("train", 10_000), ("val", 1_000), ("test", 1_000)]:
-        with open(f"{split}.jsonl", "r") as f:
+        with gzip.open(f"{split}.jsonl.gz", "r") as f:
             houses = [
                 json.loads(line)
                 for line in tqdm(f, total=size, desc=f"Loading {split}")
