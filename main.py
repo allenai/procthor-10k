@@ -46,9 +46,9 @@ def load_dataset(config: Optional[Dict[str, Any]] = None) -> prior.DatasetDict:
     val_size = config.get("val_size", 1_000)
     test_size = config.get("test_size", 1_000)
 
-    assert 1 <= len(train_size) <= int(1e-4)
-    assert 1 <= len(val_size) <= int(1e-3)
-    assert 1 <= len(test_size) <= int(1e-3)
+    assert 1 <= train_size <= int(1e-4)
+    assert 1 <= val_size <= int(1e-3)
+    assert 1 <= test_size <= int(1e-3)
 
     data = {}
     for split, size in [("train", train_size), ("val", val_size), ("test", test_size)]:
