@@ -1,37 +1,27 @@
 import gzip
 import json
+from typing import Any
 
 import prior
+from attr import field
+from attrs import define
 from tqdm import tqdm
 
-# import pickle
 
-# from datasets import load_dataset
+@define
+class LazyDataset(prior.Dataset):
+    """Lazily load the json house data."""
 
-# dataset = load_dataset("allenai/houses", use_auth_token=True)
+    cached_data: dict = field(init=False)
 
-# houses = {
-#     "train": [],
-#     "validation": [],
-#     "test": [],
-# }
-# for split in ["train", "validation", "test"]:
-#     for house_entry in dataset[split]:
-#         house = pickle.loads(house_entry["house"])
-#         houses[split].append(house)
+    def __attrs_post_init__(self):
+        self.cached_data = {}
 
-# houses["val"] = houses["validation"]
-# del houses["validation"]
-
-
-# with gzip.open("train.json.gz", "wb") as f:
-#     f.write(json.dumps(houses["train"]).encode("utf-8"))
-
-# with gzip.open("val.json.gz", "wb") as f:
-#     f.write(json.dumps(houses["val"]).encode("utf-8"))
-
-# with gzip.open("test.json.gz", "wb") as f:
-#     f.write(json.dumps(houses["test"]).encode("utf-8"))
+    def __getitem__(self, index: int) -> Any:
+        """Return the item at the given index."""
+        if index not in self.cached_data:
+            self.cached_data[index] = json.loads(self.data[index])
+        return self.cached_data[index]
 
 
 def load_dataset() -> prior.DatasetDict:
@@ -39,11 +29,6 @@ def load_dataset() -> prior.DatasetDict:
     data = {}
     for split, size in [("train", 10_000), ("val", 1_000), ("test", 1_000)]:
         with gzip.open(f"{split}.jsonl.gz", "r") as f:
-            houses = [
-                json.loads(line)
-                for line in tqdm(f, total=size, desc=f"Loading {split}")
-            ]
-        data[split] = prior.Dataset(
-            data=houses, dataset="procthor-dataset", split=split
-        )
+            houses = [line for line in tqdm(f, total=size, desc=f"Loading {split}")]
+        data[split] = LazyDataset(data=houses, dataset="procthor-dataset", split=split)
     return prior.DatasetDict(**data)
