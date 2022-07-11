@@ -23,6 +23,18 @@ class LazyDataset(prior.Dataset):
             self.cached_data[index] = json.loads(self.data[index])
         return self.cached_data[index]
 
+    def __len__(self) -> int:
+        """Return the number of items in the dataset."""
+        return super().__len__()
+
+    def __repr__(self):
+        """Return a string representation of the dataset."""
+        return super().__repr__()
+
+    def __str__(self):
+        """Return a string representation of the dataset."""
+        return super().__str__()
+
 
 def load_dataset() -> prior.DatasetDict:
     """Load the houses dataset."""
