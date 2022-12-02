@@ -21,13 +21,14 @@ To use the ProcTHOR-10K dataset, checkout the [Colab demo](https://colab.researc
 The ProcTHOR-10K dataset comes from the ProcTHOR paper:
 
 ```bibtex
-@article{procthor,
+@inproceedings{procthor,
   author={Matt Deitke and Eli VanderBilt and Alvaro Herrasti and
           Luca Weihs and Jordi Salvador and Kiana Ehsani and
           Winson Han and Eric Kolve and Ali Farhadi and
           Aniruddha Kembhavi and Roozbeh Mottaghi},
   title={{ProcTHOR: Large-Scale Embodied AI Using Procedural Generation}},
-  journal={arXiv},
-  year={2022}
+  booktitle={NeurIPS},
+  year={2022},
+  note={Outstanding Paper Award}
 }
 ```
